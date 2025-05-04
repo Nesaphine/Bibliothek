@@ -3,101 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buchverwaltung</title>
+    <title>Meine Buchverwaltung</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Buchverwaltung</h1>
+        <h1>Meine Buchverwaltung</h1>
         <nav>
             <ul>
-                <li><a href="#bibliothek">Bibliothek</a></li>
-                <li><a href="#statistik">Statistik</a></li>
-                <li><a href="#wunschliste">Wunschliste</a></li>
-                <li><a href="#kalender">Kalender</a></li>
+                <li><a href="#bibliothek" class="nav-link active">Bibliothek</a></li>
+                <li><a href="#statistik" class="nav-link">Statistik</a></li>
+                <li><a href="#wunschliste" class="nav-link">Wunschliste</a></li>
+                <li><a href="#kalender" class="nav-link">Kalender</a></li>
             </ul>
+            <button id="dark-mode-toggle">Dunkelmodus</button>
         </nav>
     </header>
 
     <main>
-        <!-- Bibliothek -->
-        <section id="bibliothek">
+        <section id="bibliothek" class="content-section active">
             <h2>Bibliothek</h2>
-            <button id="add-book-btn">Buch hinzufügen</button>
-            <div id="book-form-container" class="hidden">
-                <form id="book-form">
-                    <label for="author">Autor:</label>
-                    <input type="text" id="author" required>
-
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" required>
-
-                    <label for="price">Preis:</label>
-                    <input type="number" id="price" required>
-
-                    <label for="date">Erscheinungsdatum:</label>
-                    <input type="date" id="date" required>
-
-                    <label for="image">Bilddatei:</label>
-                    <input type="file" id="image" accept="image/*">
-
-                    <label for="genre">Genre:</label>
-                    <select id="genre">
+            <div class="controls">
+                <button id="add-book-btn">Buch hinzufügen</button>
+                <div class="filter-group">
+                    <label for="genre-filter">Genre:</label>
+                    <select id="genre-filter">
+                        <option value="all">Alle</option>
                         <option value="fantasy">Fantasy</option>
                         <option value="romance">Romance</option>
                         <option value="thriller">Thriller</option>
-                        <option value="science-fiction">Science Fiction</option>
+                        <option value="science fiction">Science Fiction</option>
+                        </select>
+                    <label for="read-filter">Status:</label>
+                    <select id="read-filter">
+                        <option value="all">Alle</option>
+                        <option value="read">Gelesen</option>
+                        <option value="unread">Ungelesen</option>
                     </select>
-
-                    <button type="submit" id="save-book">Speichern</button>
-                </form>
+                    <label for="author-filter">Autor:</label>
+                    <input type="text" id="author-filter" placeholder="Autor filtern...">
+                    <label for="name-filter">Name:</label>
+                    <input type="text" id="name-filter" placeholder="Name filtern...">
+                    <button id="filter-btn">Filtern</button>
+                    <button id="reset-filter-btn">Filter zurücksetzen</button>
+                </div>
+                 <button id="export-json-btn">Daten exportieren (JSON)</button>
             </div>
-            <div id="filters">
-                <!-- Filter Optionen -->
-                <select id="filter-genre">
-                    <option value="">Genre</option>
+            <div id="book-list" class="card-container">
+                </div>
+        </section>
+
+        <section id="statistik" class="content-section">
+            <h2>Statistiken</h2>
+            <div id="stats-content">
+                <p>Gesamte Buchanzahl: <span id="stats-total-books">0</span></p>
+                <p>Gesamtausgaben: <span id="stats-total-spent">0.00</span> €</p>
+                <p>Gelesene Bücher: <span id="stats-read-books">0</span></p>
+                <p>Ungelesene Bücher: <span id="stats-unread-books">0</span></p>
+                
+                <h3>Top 5 teuerste Bücher:</h3>
+                <ul id="stats-most-expensive">
+                    </ul>
+                <h3>Top 5 günstigste Bücher:</h3>
+                <ul id="stats-least-expensive">
+                    </ul>
+            </div>
+        </section>
+
+        <section id="wunschliste" class="content-section">
+            <h2>Wunschliste</h2>
+             <div class="controls">
+                 <button id="add-wishlist-btn">Wunsch hinzufügen</button>
+             </div>
+            <div id="wishlist-list" class="card-container">
+                </div>
+        </section>
+
+        <section id="kalender" class="content-section">
+            <h2>Bevorstehende Veröffentlichungen (Wunschliste)</h2>
+            <div id="calendar-content">
+                <ul id="upcoming-releases-list">
+                    </ul>
+            </div>
+        </section>
+    </main>
+
+    <div id="book-form-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3 id="modal-title">Buch hinzufügen/bearbeiten</h3>
+            <form id="book-form">
+                <input type="hidden" id="book-id"> <label for="book-author">Autor:</label>
+                <input type="text" id="book-author" required>
+
+                <label for="book-name">Name:</label>
+                <input type="text" id="book-name" required>
+
+                <label for="book-price">Preis (€):</label>
+                <input type="number" id="book-price" step="0.01" required>
+
+                <label for="book-release-date">Erscheinungsdatum:</label>
+                <input type="date" id="book-release-date" required>
+
+                <label for="book-genre">Genre:</label>
+                <select id="book-genre" required>
+                    <option value="">Bitte wählen...</option>
                     <option value="fantasy">Fantasy</option>
                     <option value="romance">Romance</option>
                     <option value="thriller">Thriller</option>
-                    <option value="science-fiction">Science Fiction</option>
-                </select>
-                <select id="filter-status">
-                    <option value="">Status</option>
-                    <option value="gelesen">Gelesen</option>
-                    <option value="ungelesen">Ungelesen</option>
-                </select>
-                <input type="text" id="filter-author" placeholder="Autor">
-                <input type="text" id="filter-name" placeholder="Name">
-            </div>
-            <div id="book-list"></div>
-        </section>
+                    <option value="science fiction">Science Fiction</option>
+                    </select>
 
-        <!-- Statistik -->
-        <section id="statistik">
-            <h2>Statistik</h2>
-            <div id="stats">
-                <p>Buchanzahl: <span id="total-books">0</span></p>
-                <p>Gesamtausgaben: <span id="total-expenses">0€</span></p>
-                <p>Gelesene Bücher: <span id="read-books">0</span></p>
-                <p>Ungelesene Bücher: <span id="unread-books">0</span></p>
-                <p>Teuerste 5 Bücher: <span id="top-5-expensive"></span></p>
-                <p>Günstigste 5 Bücher: <span id="top-5-cheap"></span></p>
-            </div>
-        </section>
+                <label for="book-image">Bilddatei:</label>
+                <input type="file" id="book-image" accept="image/*">
+                <img id="image-preview" src="#" alt="Bildvorschau" style="max-width: 100px; display: none;">
+                <input type="hidden" id="book-image-base64"> <div class="form-actions">
+                    <button type="submit" id="save-book-btn">Speichern</button>
+                    <button type="button" id="cancel-book-btn">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        <!-- Wunschliste -->
-        <section id="wunschliste">
-            <h2>Wunschliste</h2>
-            <button id="add-wishlist-btn">Zur Wunschliste hinzufügen</button>
-            <div id="wishlist"></div>
-        </section>
+     <div id="wishlist-form-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-wishlist-btn">&times;</span>
+            <h3 id="wishlist-modal-title">Wunsch hinzufügen/bearbeiten</h3>
+            <form id="wishlist-form">
+                <input type="hidden" id="wishlist-id">
+                <label for="wishlist-author">Autor:</label>
+                <input type="text" id="wishlist-author" required>
 
-        <!-- Kalender -->
-        <section id="kalender">
-            <h2>Kalender</h2>
-            <div id="calendar"></div>
-        </section>
-    </main>
+                <label for="wishlist-name">Name:</label>
+                <input type="text" id="wishlist-name" required>
+
+                <label for="wishlist-price">Preis (€):</label>
+                <input type="number" id="wishlist-price" step="0.01" required>
+
+                <label for="wishlist-release-date">Erscheinungsdatum:</label>
+                <input type="date" id="wishlist-release-date" required>
+
+                <label for="wishlist-genre">Genre:</label>
+                 <select id="wishlist-genre" required>
+                    <option value="">Bitte wählen...</option>
+                    <option value="fantasy">Fantasy</option>
+                    <option value="romance">Romance</option>
+                    <option value="thriller">Thriller</option>
+                    <option value="science fiction">Science Fiction</option>
+                 </select>
+
+                <label for="wishlist-shop-link">Link zum Shop (optional):</label>
+                <input type="url" id="wishlist-shop-link" placeholder="https://...">
+
+                <label for="wishlist-image">Bilddatei:</label>
+                <input type="file" id="wishlist-image" accept="image/*">
+                <img id="wishlist-image-preview" src="#" alt="Bildvorschau" style="max-width: 100px; display: none;">
+                <input type="hidden" id="wishlist-image-base64">
+
+                <div class="form-actions">
+                    <button type="submit" id="save-wishlist-btn">Speichern</button>
+                    <button type="button" id="cancel-wishlist-btn">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
