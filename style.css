@@ -1,71 +1,490 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
+/* Globale Variablen für Farben */
+:root {
+    --bg-color: #f0f8ff; /* AliceBlue - Helles Mint/Blau */
+    --text-color: #333;
+    --primary-color: #e6e6fa; /* Lavender */
+    --secondary-color: #98fb98; /* PaleGreen - Mintgrün */
+    --accent-color: #dda0dd; /* Plum - Akzent für Lavendel */
+    --card-bg: #fff;
+    --border-color: #ccc;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --link-color: #6a5acd; /* SlateBlue */
+    --button-bg: var(--secondary-color);
+    --button-hover-bg: #87e987;
+    --delete-button-bg: #ff7f7f; /* Coral */
+    --delete-button-hover-bg: #ff6347; /* Tomato */
+    --favorite-button-color: #ffd700; /* Gold */
+}
+
+/* Dark Mode Farben */
+body.dark-mode {
+    --bg-color: #2c2f33; /* Dunkelgrau */
+    --text-color: #f0f0f0; /* Helles Grau */
+    --primary-color: #4a4158; /* Dunkles Lavendel */
+    --secondary-color: #3b6b3b; /* Dunkles Mintgrün */
+    --accent-color: #8b4a8b; /* Dunkles Plum */
+    --card-bg: #36393f; /* Etwas helleres Grau */
+    --border-color: #555;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --link-color: #9485e0; /* Helleres SlateBlue */
+    --button-bg: var(--secondary-color);
+    --button-hover-bg: #4a8a4a;
+    --delete-button-bg: #a04f4f; /* Dunkleres Coral */
+    --delete-button-hover-bg: #c44e3d; /* Dunkleres Tomato */
+    --favorite-button-color: #e0b000; /* Dunkleres Gold */
+}
+
+/* Allgemeine Stile */
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+body {
+    font-family: sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+}
+
 header {
-    background-color: #98d9c2;
-    color: #fff;
+    background-color: var(--primary-color);
+    color: var(--text-color);
     padding: 1rem;
     text-align: center;
+    border-bottom: 2px solid var(--accent-color);
+    transition: background-color 0.3s;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
 }
 
 nav ul {
     list-style: none;
-    padding: 0;
+    display: flex;
+    gap: 1.5rem;
 }
 
-nav ul li {
-    display: inline;
-    margin-right: 1rem;
-}
-
-nav ul li a {
-    color: #fff;
+nav a {
     text-decoration: none;
+    color: var(--link-color);
+    font-weight: bold;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s, border-bottom-color 0.3s;
 }
+
+nav a:hover,
+nav a.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+#dark-mode-toggle {
+    padding: 0.5rem 1rem;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#dark-mode-toggle:hover {
+    background-color: var(--button-hover-bg);
+}
+
 
 main {
-    padding: 2rem;
-}
-
-section {
-    margin-bottom: 2rem;
     padding: 1rem;
-    background-color: #eae7f2;
-    border-radius: 8px;
+    max-width: 1200px;
+    margin: 1rem auto;
 }
 
-button {
-    background-color: #8fbc8f;
-    border: none;
-    color: white;
-    padding: 10px 20px;
+/* Sektionen */
+.content-section {
+    display: none; /* Standardmäßig ausgeblendet */
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    transition: background-color 0.3s;
+}
+
+.content-section.active {
+    display: block; /* Aktive Sektion anzeigen */
+}
+
+h2 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Steuerungselemente (Buttons, Filter) */
+.controls {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--bg-color);
     border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+}
+
+.controls label {
+    margin-right: 0.3rem;
+    font-weight: bold;
+}
+
+.controls input[type="text"],
+.controls select,
+.controls input[type="number"] {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.controls button {
+    padding: 0.6rem 1rem;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+.controls button:hover {
+    background-color: var(--button-hover-bg);
+}
+
+#export-json-btn {
+    background-color: var(--link-color);
+    color: #fff;
+}
+#export-json-btn:hover {
+    background-color: var(--accent-color);
+}
+
+
+/* Karten-Container */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive Grid */
+    gap: 1.5rem;
+}
+
+/* Buch-/Wunschkarten */
+.book-card, .wishlist-card {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px var(--shadow-color);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease-in-out, background-color 0.3s, border-color 0.3s;
+}
+
+.book-card:hover, .wishlist-card:hover {
+    transform: translateY(-5px);
+}
+
+.book-card img, .wishlist-card img {
+    max-width: 100%;
+    height: 200px; /* Feste Höhe für Konsistenz */
+    object-fit: cover; /* Bild zuschneiden, nicht verzerren */
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    background-color: #eee; /* Placeholder background */
+}
+
+.book-card h3, .wishlist-card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.book-card p, .wishlist-card p {
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.book-card p strong, .wishlist-card p strong {
+    color: var(--accent-color);
+}
+
+.card-actions {
+    margin-top: auto; /* Buttons nach unten schieben */
+    padding-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap; /* Umbruch bei kleinen Karten */
+    justify-content: space-between; /* Buttons verteilen */
+}
+
+.card-actions button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.2s;
+}
+
+.edit-btn, .bought-btn {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+}
+.edit-btn:hover, .bought-btn:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.delete-btn {
+    background-color: var(--delete-button-bg);
+    color: white;
+}
+.delete-btn:hover {
+    background-color: var(--delete-button-hover-bg);
+}
+
+.fav-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem; /* Größeres Icon */
+    cursor: pointer;
+    color: #ccc; /* Standardfarbe */
+    padding: 0; /* Weniger Platz */
+}
+
+.fav-btn.favorited {
+    color: var(--favorite-button-color); /* Gold für Favoriten */
+}
+
+.wishlist-card .shop-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+.wishlist-card .shop-link:hover {
+    text-decoration: underline;
+}
+
+/* Modal-Stile */
+.modal {
+    display: none; /* Standardmäßig versteckt */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6); /* Dunkler Hintergrund */
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    margin: 10% auto;
+    padding: 25px;
+    border: 1px solid var(--border-color);
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+    position: relative;
+    color: var(--text-color);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.close-btn, .close-wishlist-btn {
+    color: var(--text-color);
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #659d65;
+.close-btn:hover,
+.close-btn:focus,
+.close-wishlist-btn:hover,
+.close-wishlist-btn:focus {
+    color: var(--delete-button-bg);
+    text-decoration: none;
 }
 
-.hidden {
-    display: none;
+#book-form label, #wishlist-form label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-/* Dunkelmodus */
-body.dark-mode {
-    background-color: #333;
-    color: #f5f5f5;
+#book-form input[type="text"],
+#book-form input[type="number"],
+#book-form input[type="date"],
+#book-form input[type="url"],
+#book-form select,
+#book-form input[type="file"],
+#wishlist-form input[type="text"],
+#wishlist-form input[type="number"],
+#wishlist-form input[type="date"],
+#wishlist-form input[type="url"],
+#wishlist-form select,
+#wishlist-form input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
-body.dark-mode header {
-    background-color: #444;
+#image-preview, #wishlist-image-preview {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    padding: 5px;
+    background-color: var(--bg-color);
 }
 
-body.dark-mode section {
-    background-color: #555;
+.form-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.form-actions button {
+     padding: 10px 20px;
+     border: none;
+     border-radius: 5px;
+     cursor: pointer;
+     margin-left: 10px;
+     font-weight: bold;
+}
+
+#save-book-btn, #save-wishlist-btn {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+}
+#save-book-btn:hover, #save-wishlist-btn:hover {
+    background-color: var(--button-hover-bg);
+}
+
+#cancel-book-btn, #cancel-wishlist-btn {
+    background-color: #ccc;
+    color: #333;
+}
+#cancel-book-btn:hover, #cancel-wishlist-btn:hover {
+    background-color: #bbb;
+}
+
+
+/* Statistik */
+#stats-content ul {
+    list-style: none;
+    padding-left: 0;
+}
+#stats-content li {
+    background-color: var(--bg-color);
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* Kalender */
+#upcoming-releases-list {
+     list-style: none;
+    padding-left: 0;
+}
+#upcoming-releases-list li {
+    background-color: var(--bg-color);
+    padding: 0.7rem;
+    margin-bottom: 0.7rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+#upcoming-releases-list li strong {
+    color: var(--accent-color);
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    nav {
+        flex-direction: column;
+    }
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-group {
+         flex-direction: column;
+         align-items: stretch;
+    }
+    .filter-group label {
+        margin-top: 0.5rem;
+    }
+    .card-container {
+        grid-template-columns: 1fr; /* Eine Spalte auf kleinen Bildschirmen */
+    }
+    .modal-content {
+        width: 95%;
+        margin: 20% auto;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    main {
+        padding: 0.5rem;
+    }
+    .content-section {
+        padding: 1rem;
+    }
+    .card-actions {
+        flex-direction: column; /* Buttons untereinander */
+        align-items: flex-start; /* Links ausrichten */
+        gap: 0.5rem;
+    }
+    .card-actions button {
+        width: 100%; /* Volle Breite für Buttons */
+    }
+    .fav-btn {
+        align-self: flex-end; /* Favoriten-Button nach rechts */
+        width: auto; /* Auto-Breite wiederherstellen */
+    }
 }
