@@ -33,7 +33,7 @@
                         <option value="romance">Romance</option>
                         <option value="thriller">Thriller</option>
                         <option value="science fiction">Science Fiction</option>
-                        </select>
+                    </select>
                     <label for="read-filter">Status:</label>
                     <select id="read-filter">
                         <option value="all">Alle</option>
@@ -44,13 +44,24 @@
                     <input type="text" id="author-filter" placeholder="Autor filtern...">
                     <label for="name-filter">Name:</label>
                     <input type="text" id="name-filter" placeholder="Name filtern...">
+
+                    <label for="sort-by">Sortieren nach:</label>
+                    <select id="sort-by">
+                        <option value="none">Standard</option>
+                        <option value="name-az">Name (A-Z)</option>
+                        <option value="author-az">Autor (A-Z)</option>
+                        <option value="price-asc">Preis (Günstigster zuerst)</option>
+                        <option value="price-desc">Preis (Teuerster zuerst)</option>
+                        <option value="date-asc">Erscheinungsdatum (Älteste zuerst)</option>
+                        <option value="date-desc">Erscheinungsdatum (Neueste zuerst)</option>
+                    </select>
                     <button id="filter-btn">Filtern</button>
                     <button id="reset-filter-btn">Filter zurücksetzen</button>
                 </div>
-                 <button id="export-json-btn">Daten exportieren (JSON)</button>
+                <button id="export-json-btn">Daten exportieren (JSON)</button>
             </div>
             <div id="book-list" class="card-container">
-                </div>
+            </div>
         </section>
 
         <section id="statistik" class="content-section">
@@ -60,7 +71,7 @@
                 <p>Gesamtausgaben: <span id="stats-total-spent">0.00</span> €</p>
                 <p>Gelesene Bücher: <span id="stats-read-books">0</span></p>
                 <p>Ungelesene Bücher: <span id="stats-unread-books">0</span></p>
-                
+
                 <h3>Top 5 teuerste Bücher:</h3>
                 <ul id="stats-most-expensive">
                     </ul>
@@ -72,9 +83,9 @@
 
         <section id="wunschliste" class="content-section">
             <h2>Wunschliste</h2>
-             <div class="controls">
-                 <button id="add-wishlist-btn">Wunsch hinzufügen</button>
-             </div>
+            <div class="controls">
+                <button id="add-wishlist-btn">Wunsch hinzufügen</button>
+            </div>
             <div id="wishlist-list" class="card-container">
                 </div>
         </section>
@@ -125,7 +136,7 @@
         </div>
     </div>
 
-     <div id="wishlist-form-modal" class="modal">
+    <div id="wishlist-form-modal" class="modal">
         <div class="modal-content">
             <span class="close-wishlist-btn">&times;</span>
             <h3 id="wishlist-modal-title">Wunsch hinzufügen/bearbeiten</h3>
@@ -144,13 +155,13 @@
                 <input type="date" id="wishlist-release-date" required>
 
                 <label for="wishlist-genre">Genre:</label>
-                 <select id="wishlist-genre" required>
+                <select id="wishlist-genre" required>
                     <option value="">Bitte wählen...</option>
                     <option value="fantasy">Fantasy</option>
                     <option value="romance">Romance</option>
                     <option value="thriller">Thriller</option>
                     <option value="science fiction">Science Fiction</option>
-                 </select>
+                </select>
 
                 <label for="wishlist-shop-link">Link zum Shop (optional):</label>
                 <input type="url" id="wishlist-shop-link" placeholder="https://...">
