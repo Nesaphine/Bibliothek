@@ -434,6 +434,23 @@ h2 {
     color: var(--accent-color);
 }
 
+/* --- NEUER CODE FÜR CHECKBOX STILE --- */
+.book-card p label {
+    font-weight: normal; /* Label-Text nicht fett */
+    margin-left: 5px; /* Etwas Abstand zum "Status:" Text */
+    cursor: pointer;
+    display: inline-flex; /* Checkbox und Text in einer Zeile halten */
+    align-items: center; /* Vertikal zentrieren */
+}
+
+.book-card p label input[type="checkbox"] {
+    margin-right: 5px; /* Abstand zwischen Checkbox und Text */
+    margin-bottom: 0; /* Kein extra Abstand unten */
+    width: auto; /* Standardbreite für Checkbox */
+    padding: 0; /* Kein extra Padding */
+}
+/* ENDE NEUER CODE */
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
