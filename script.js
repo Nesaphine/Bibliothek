@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nameFilter = document.getElementById('name-filter');
     const filterBtn = document.getElementById('filter-btn');
     const resetFilterBtn = document.getElementById('reset-filter-btn');
+    const sortBySelect = document.getElementById('sort-by'); // <--- NEU: Referenz auf das Sortier-Dropdown
 
 
     // Statistik
@@ -115,6 +116,11 @@ document.addEventListener('DOMContentLoaded', () => {
             bookCard.classList.add('book-card');
             bookCard.dataset.id = book.id; // ID für spätere Aktionen speichern
 
+            // Füge optional die 'read' Klasse hinzu, wenn das Buch gelesen ist (für CSS-Styling)
+            // if (book.isRead) {
+            //     bookCard.classList.add('read');
+            // }
+
             bookCard.innerHTML = `
                 <img src="${book.image || 'placeholder.png'}" alt="Buchcover von ${book.name}" onerror="this.onerror=null;this.src='placeholder.png';">
                 <h3>${book.name}</h3>
@@ -122,7 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p><strong>Preis:</strong> ${formatCurrency(book.price)} €</p>
                 <p><strong>Erschienen:</strong> ${formatDate(book.releaseDate)}</p>
                 <p><strong>Genre:</strong> ${book.genre || 'Unbekannt'}</p>
-                <p><strong>Status:</strong> ${book.isRead ? 'Gelesen' : 'Ungelesen'}</p>
+                <p>
+                    <strong>Status:</strong>
+                    <label>
+                        <input type="checkbox" class="read-checkbox" ${book.isRead ? 'checked' : ''}> Gelesen
+                    </label>
+                </p>
                 <div class="card-actions">
                     <div>
                         <button class="edit-btn">Bearbeiten</button>
@@ -137,6 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
             bookCard.querySelector('.delete-btn').addEventListener('click', () => deleteBook(book.id));
             bookCard.querySelector('.fav-btn').addEventListener('click', (e) => toggleFavorite(book.id, e.target));
 
+            // --- NEUER CODE: Event Listener für die Gelesen-Checkbox ---
+            const readCheckbox = bookCard.querySelector('.read-checkbox');
+            readCheckbox.addEventListener('change', (event) => {
+                toggleReadStatus(book.id, event.target.checked);
+            });
+            // --- ENDE NEUER CODE ---
+
             bookListContainer.appendChild(bookCard);
         });
     };
@@ -147,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
          if (wishlist.length === 0) {
              wishlistContainer.innerHTML = '<p>Deine Wunschliste ist leer.</p>';
              return;
-        }
+         }
 
         wishlist.forEach(item => {
             const wishCard = document.createElement('div');
@@ -234,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         upcoming.forEach(item => {
             const li = document.createElement('li');
             li.innerHTML = `
-                <strong>${formatDate(item.releaseDate)}:</strong> ${item.name} von ${item.author}
+                 <strong>${formatDate(item.releaseDate)}:</strong> ${item.name} von ${item.author}
             `;
             upcomingReleasesList.appendChild(li);
         });
@@ -297,14 +315,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
      // --- Modal Funktionen (Wunschliste) ---
      const openAddWishlistModal = () => {
-        wishlistModalTitle.textContent = 'Wunsch hinzufügen';
-        wishlistForm.reset();
-        wishlistIdInput.value = '';
-        wishlistImagePreview.style.display = 'none';
-        wishlistImagePreview.src = '#';
-        wishlistImageBase64Input.value = '';
-        wishlistFormModal.style.display = 'block';
-    };
+         wishlistModalTitle.textContent = 'Wunsch hinzufügen';
+         wishlistForm.reset();
+         wishlistIdInput.value = '';
+         wishlistImagePreview.style.display = 'none';
+         wishlistImagePreview.src = '#';
+         wishlistImageBase64Input.value = '';
+         wishlistFormModal.style.display = 'block';
+     };
 
     const openEditWishlistModal = (id) => {
         const item = wishlist.find(w => w.id === id);
@@ -334,8 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
      const closeWishlistModal = () => {
-        wishlistFormModal.style.display = 'none';
-    };
+         wishlistFormModal.style.display = 'none';
+     };
 
 
     // --- CRUD Operationen (Buch) ---
@@ -350,15 +368,15 @@ document.addEventListener('DOMContentLoaded', () => {
             releaseDate: document.getElementById('book-release-date').value,
             genre: document.getElementById('book-genre').value,
             image: bookImageBase64Input.value || null, // Verwende Base64 aus dem versteckten Feld
-             // Standardwerte für neue Bücher
-            isRead: id ? books.find(b => b.id === id)?.isRead : false, // Behalte Status bei Bearbeitung
-            isFavorite: id ? books.find(b => b.id === id)?.isFavorite : false // Behalte Favorit bei Bearbeitung
+             // Standardwerte für neue Bücher / Behalte Status bei Bearbeitung
+             isRead: id ? books.find(b => b.id === id)?.isRead : false,
+             isFavorite: id ? books.find(b => b.id === id)?.isFavorite : false
         };
 
          // Validierung (einfach)
         if (!bookData.author || !bookData.name || !bookData.releaseDate || !bookData.genre) {
-            alert('Bitte füllen Sie alle Pflichtfelder aus (Autor, Name, Erscheinungsdatum, Genre).');
-            return;
+             alert('Bitte füllen Sie alle Pflichtfelder aus (Autor, Name, Erscheinungsdatum, Genre).');
+             return;
         }
 
 
@@ -392,6 +410,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- NEUE FUNKTION: Gelesen-Status umschalten ---
+    const toggleReadStatus = (id, isRead) => {
+        const index = books.findIndex(b => b.id === id);
+        if (index > -1) {
+            books[index].isRead = isRead; // Status aktualisieren
+            saveBooks(); // Speichern (updated Ansicht und Stats)
+        }
+    };
+    // --- ENDE NEUE FUNKTION ---
+
+
      // --- CRUD Operationen (Wunschliste) ---
     const handleWishlistFormSubmit = (event) => {
         event.preventDefault();
@@ -408,10 +437,10 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
          // Validierung
-        if (!wishData.author || !wishData.name || !wishData.releaseDate || !wishData.genre) {
-             alert('Bitte füllen Sie alle Pflichtfelder aus (Autor, Name, Erscheinungsdatum, Genre).');
-            return;
-        }
+         if (!wishData.author || !wishData.name || !wishData.releaseDate || !wishData.genre) {
+              alert('Bitte füllen Sie alle Pflichtfelder aus (Autor, Name, Erscheinungsdatum, Genre).');
+             return;
+         }
 
 
         if (id) { // Bearbeiten
@@ -428,39 +457,39 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
      const deleteWishlistItem = (id) => {
-        if (confirm('Möchten Sie diesen Wunsch wirklich löschen?')) {
-            wishlist = wishlist.filter(w => w.id !== id);
-            saveWishlist();
-        }
-    };
-
-     // Wunsch zu Bibliothek verschieben
-     const moveToLibrary = (id) => {
-         const itemIndex = wishlist.findIndex(w => w.id === id);
-         if (itemIndex > -1) {
-             const item = wishlist[itemIndex];
-             if (confirm(`Möchten Sie "${item.name}" zur Bibliothek hinzufügen?`)) {
-                 const newBook = {
-                     id: generateId(), // Neue ID für das Buch
-                     author: item.author,
-                     name: item.name,
-                     price: item.price,
-                     releaseDate: item.releaseDate,
-                     genre: item.genre,
-                     image: item.image,
-                     isRead: false, // Standardmäßig ungelesen
-                     isFavorite: false // Standardmäßig kein Favorit
-                 };
-                 books.push(newBook);
-                 wishlist.splice(itemIndex, 1); // Aus Wunschliste entfernen
-
-                 saveBooks();
-                 saveWishlist();
-             }
+         if (confirm('Möchten Sie diesen Wunsch wirklich löschen?')) {
+             wishlist = wishlist.filter(w => w.id !== id);
+             saveWishlist();
          }
      };
 
-    // --- Filterfunktion ---
+     // Wunsch zu Bibliothek verschieben
+      const moveToLibrary = (id) => {
+          const itemIndex = wishlist.findIndex(w => w.id === id);
+          if (itemIndex > -1) {
+              const item = wishlist[itemIndex];
+              if (confirm(`Möchten Sie "${item.name}" zur Bibliothek hinzufügen?`)) {
+                  const newBook = {
+                      id: generateId(), // Neue ID für das Buch
+                      author: item.author,
+                      name: item.name,
+                      price: item.price,
+                      releaseDate: item.releaseDate,
+                      genre: item.genre,
+                      image: item.image,
+                      isRead: false, // Standardmäßig ungelesen
+                      isFavorite: false // Standardmäßig kein Favorit
+                  };
+                  books.push(newBook);
+                  wishlist.splice(itemIndex, 1); // Aus Wunschliste entfernen
+
+                  saveBooks();
+                  saveWishlist();
+              }
+          }
+      };
+
+    // --- Filter und SORTIERUNG Funktion --- // <--- An den Namen angepasst
     const applyFilters = () => {
         const genre = genreFilter.value;
         const readStatus = readFilter.value;
@@ -474,7 +503,47 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesName = !name || book.name.toLowerCase().includes(name);
             return matchesGenre && matchesReadStatus && matchesAuthor && matchesName;
         });
-        renderBooks(filtered);
+
+        // --- NEUER CODE: Sortierung anwenden ---
+        const sortBy = sortBySelect.value; // Wert aus dem neuen Dropdown holen
+
+        if (sortBy !== 'none') {
+            filtered.sort((a, b) => {
+                if (sortBy === 'name-az') {
+                    return a.name.localeCompare(b.name); // Nach Name A-Z
+                } else if (sortBy === 'author-az') {
+                    return a.author.localeCompare(b.author); // Nach Autor A-Z
+                } else if (sortBy === 'price-asc') { // Optionaler Preis Asc
+                     const priceA = parseFloat(a.price || 0);
+                     const priceB = parseFloat(b.price || 0);
+                     return priceA - priceB;
+                } else if (sortBy === 'price-desc') { // Optionaler Preis Desc
+                     const priceA = parseFloat(a.price || 0);
+                     const priceB = parseFloat(b.price || 0);
+                     return priceB - priceA;
+                } else if (sortBy === 'date-asc') { // Optionales Datum Asc
+                     const dateA = new Date(a.releaseDate);
+                     const dateB = new Date(b.releaseDate);
+                     // Behandle ungültige Daten, schiebe sie ans Ende oder Anfang
+                     if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+                     if (isNaN(dateA.getTime())) return 1;
+                     if (isNaN(dateB.getTime())) return -1;
+                     return dateA - dateB;
+                } else if (sortBy === 'date-desc') { // Optionales Datum Desc
+                     const dateA = new Date(a.releaseDate);
+                     const dateB = new Date(b.releaseDate);
+                     // Behandle ungültige Daten
+                      if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+                     if (isNaN(dateA.getTime())) return 1;
+                     if (isNaN(dateB.getTime())) return -1;
+                     return dateB - dateA;
+                }
+                return 0; // Kein Sortierkriterium
+            });
+        }
+        // --- ENDE NEUER CODE ---
+
+        renderBooks(filtered); // Diese Zeile gab es schon
     };
 
     const resetFilters = () => {
@@ -482,6 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
         readFilter.value = 'all';
         authorFilter.value = '';
         nameFilter.value = '';
+        sortBySelect.value = 'none'; // <--- NEU: Sortierung zurücksetzen
         applyFilters(); // Filter zurücksetzen und neu rendern
     };
 
@@ -502,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Daten für die aktive Sektion neu laden/rendern (optional, aber gut für Aktualität)
         switch (targetId) {
             case 'bibliothek':
-                applyFilters(); // Filter anwenden beim Wechseln zur Bibliothek
+                applyFilters(); // Filter (und Sortierung) anwenden beim Wechseln zur Bibliothek
                 break;
             case 'statistik':
                 renderStats();
@@ -585,6 +655,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // genreFilter.addEventListener('change', applyFilters);
     // readFilter.addEventListener('change', applyFilters);
 
+    // --- NEU: Listener für Sortierung ---
+    sortBySelect.addEventListener('change', applyFilters); // Filter (und jetzt Sortierung) neu anwenden bei Änderung
+    // --- ENDE NEU ---
+
+
     // JSON Export
     exportJsonBtn.addEventListener('click', exportToJson);
 
@@ -596,12 +671,12 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCalendar(); // Initial Kalenderdaten laden
 
     // Schließen des Modals bei Klick außerhalb des Inhalts (optional)
-    window.onclick = (event) => {
-        if (event.target == bookFormModal) {
-            closeBookModal();
-        }
-         if (event.target == wishlistFormModal) {
-            closeWishlistModal();
-        }
-    };
+     window.onclick = (event) => {
+         if (event.target == bookFormModal) {
+             closeBookModal();
+         }
+          if (event.target == wishlistFormModal) {
+             closeWishlistModal();
+         }
+     };
 });
